@@ -2,11 +2,14 @@ from rich.console import Console
 from rich.text import Text
 from rich.panel import Panel
 from rich.theme import Theme
+from rich.style import Style
+from rich.color import Color
 
+# Настроим консоль с пользовательской темой
 custom_theme = Theme({
     "field": "bold cyan",
     "label": "bold magenta",
-    "title": "bold gradient(magenta, cyan)",
+    "title": Style(color="magenta", bgcolor="yellow", bold=True),  # Простой стиль для заголовка
     "menu": "bold green",
     "input": "bold yellow"
 })
