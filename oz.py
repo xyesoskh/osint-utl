@@ -2,95 +2,91 @@ import pyfiglet
 from rich.console import Console
 from rich.text import Text
 
-# Настройка консоли
 console = Console()
 
-# Генерация текста с pyfiglet для заголовка
-ascii_title = pyfiglet.figlet_format("NOVA OSINT", font="slant")
-
-# Создание текста с плавным градиентом
+# Градиентный заголовок
+ascii_title = pyfiglet.figlet_format("OZ OSINT", font="slant")
 gradient_text = Text(ascii_title, style="bold")
 gradient_text.stylize("gradient(blue, magenta)")
 
-# Вывод заголовка с градиентом
-console.print(gradient_text)
-console.print("powered by ZYAMA NEVERMORSKY", style="bold magenta")
+def show_banner():
+    console.print(gradient_text)
+    console.print("powered by ZYAMA NEVERMORSKY", style="bold magenta")
 
-# Функция для оформления и вывода данных
 def format_data(label, value):
-    if value is not None:
+    if value:
         return f"[+] {label}: {value}"
     return ""
 
-# Сбор данных
-print("Введите информацию для создания профиля:")
+# Словарь для анкеты
+profile = {
+    "ФИО": None,
+    "Город": None,
+    "Номер телефона": None,
+    "Дата рождения": None,
+    "Адрес": None,
+    "Паспорт": None,
+    "СНИЛС": None,
+    "Соц. сети": None,
+    "Цель": None
+}
 
-fio = input("Введите ФИО: ")
-city = input("Введите город: ")
-phone_number = input("Введите номер телефона: ")
-dob = input("Введите дату рождения (дд.мм.гггг): ")
-address = input("Введите адрес: ")
-passport = input("Введите серию и номер паспорта: ")
-snils = input("Введите СНИЛС: ")
-socials = input("Введите соц. сети: ")
+def input_profile():
+    console.print("\n[bold cyan]Введите информацию:[/bold cyan]")
+    profile["Цель"] = input("Кто (например, мама, папа, сам): ")
+    profile["ФИО"] = input("ФИО: ")
+    profile["Город"] = input("Город: ")
+    profile["Номер телефона"] = input("Номер телефона: ")
+    profile["Дата рождения"] = input("Дата рождения (дд.мм.гггг): ")
+    profile["Адрес"] = input("Адрес: ")
+    profile["Паспорт"] = input("Серия и номер паспорта: ")
+    profile["СНИЛС"] = input("СНИЛС: ")
+    profile["Соц. сети"] = input("Соц. сети: ")
+    console.print("\n[bold green]Анкета создана![/bold green]")
 
-# Добавление цели
-goal = input("Введите цель (например, мама, папа, или само): ")
+def show_profile():
+    if not any(profile.values()):
+        console.print("\n[bold red]Анкета ещё не создана.[/bold red]")
+        return
+    console.print(f"\n[bold green]{profile['Цель'].upper()}[/bold green]")
+    for key, value in profile.items():
+        if key != "Цель":
+            console.print(format_data(key, value))
 
-# Печать оформленных данных
-console.print(f"\n[bold green]Цель: {goal}[/bold green]")
+def edit_profile():
+    if not any(profile.values()):
+        console.print("\n[bold red]Сначала создайте анкету![/bold red]")
+        return
+    input_profile()
 
-# Вывод всех данных с форматированием
-console.print(format_data("ФИО", fio))
-console.print(format_data("Город", city))
-console.print(format_data("Номер телефона", phone_number))
-console.print(format_data("Дата рождения", dob))
-console.print(format_data("Адрес", address))
-console.print(format_data("Паспорт", passport))
-console.print(format_data("СНИЛС", snils))
-console.print(format_data("Соц. сети", socials))
+def main_menu():
+    while True:
+        show_banner()
+        console.print("\n[bold cyan]Главное меню:[/bold cyan]")
+        console.print("[1] Создать анкету")
+        console.print("[2] Показать анкету")
+        console.print("[3] Редактировать анкету")
+        console.print("[4] Выход")
+        console.print("[bold red][5] Снос аккаунта [UNWORK][/bold red]")  # Новый пункт
 
-# Главное меню
-menu_options = [
-    "[1] Показать профиль",
-    "[2] Внести изменения",
-    "[3] Выход"
-]
+        choice = input("\nВыберите пункт: ")
 
-# Отображение меню
-console.print("\n[bold cyan]Меню:[/bold cyan]")
-for option in menu_options:
-    console.print(option)
+        if choice == "1":
+            input_profile()
+        elif choice == "2":
+            show_profile()
+        elif choice == "3":
+            edit_profile()
+        elif choice == "4":
+            console.print("\n[bold red]Выход из программы...[/bold red]")
+            break
+        elif choice == "5":
+            console.print("\n[bold red]Функция UNWORK пока не реализована.[/bold red]")
+        else:
+            console.print("[bold red]Неверный выбор![/bold red]")
 
-# Выбор опции меню
-choice = input("Выберите опцию: ")
+        input("\n[Нажмите Enter, чтобы вернуться в меню...]")
+        console.clear()
 
-if choice == "1":
-    console.print("\n[bold blue]Профиль пользователя:[/bold blue]")
-    console.print(format_data("ФИО", fio))
-    console.print(format_data("Город", city))
-    console.print(format_data("Номер телефона", phone_number))
-    console.print(format_data("Дата рождения", dob))
-    console.print(format_data("Адрес", address))
-    console.print(format_data("Паспорт", passport))
-    console.print(format_data("СНИЛС", snils))
-    console.print(format_data("Соц. сети", socials))
-
-elif choice == "2":
-    console.print("\n[bold yellow]Внесите изменения в профиль:[/bold yellow]")
-    # Повторный ввод данных для изменений
-    fio = input("Введите новое ФИО: ")
-    city = input("Введите новый город: ")
-    phone_number = input("Введите новый номер телефона: ")
-    dob = input("Введите новую дату рождения: ")
-    address = input("Введите новый адрес: ")
-    passport = input("Введите новый паспорт: ")
-    snils = input("Введите новый СНИЛС: ")
-    socials = input("Введите новые соц. сети: ")
-    console.print("\n[bold green]Данные обновлены![/bold green]")
-
-elif choice == "3":
-    console.print("\n[bold red]Выход из программы...[/bold red]")
-
-else:
-    console.print("\n[bold red]Неверный выбор! Попробуйте снова.[/bold red]")
+# Запуск
+main_menu()
