@@ -11,7 +11,7 @@ gradient_text.stylize("gradient(blue, magenta)")
 
 def show_banner():
     console.print(gradient_text)
-    console.print("powered by ZYAMA NEVERMORSKY", style="bold magenta")
+    console.print("powered by ZYAMA", style="bold magenta")
 
 def format_data(label, value):
     if value:
@@ -63,24 +63,24 @@ def main_menu():
     while True:
         show_banner()
         console.print("\n[bold cyan]Главное меню:[/bold cyan]")
-        console.print("[1] Создать анкету")
-        console.print("[2] Показать анкету")
-        console.print("[3] Редактировать анкету")
-        console.print("[4] Выход")
-        console.print("[bold red][5] Снос аккаунта [UNWORK][/bold red]")  # Новый пункт
+        console.print("[1] Снос аккаунта [bold red][UNWORK][/bold red]")
+        console.print("[2] Создать анкету")
+        console.print("[3] Показать анкету")
+        console.print("[4] Редактировать анкету")
+        console.print("[5] Выход")
 
         choice = input("\nВыберите пункт: ")
 
-        if choice == "1":
+        if choice == "2":
             input_profile()
-        elif choice == "2":
-            show_profile()
         elif choice == "3":
-            edit_profile()
+            show_profile()
         elif choice == "4":
+            edit_profile()
+        elif choice == "5":
             console.print("\n[bold red]Выход из программы...[/bold red]")
             break
-        elif choice == "5":
+        elif choice == "1":
             console.print("\n[bold red]Функция UNWORK пока не реализована.[/bold red]")
         else:
             console.print("[bold red]Неверный выбор![/bold red]")
