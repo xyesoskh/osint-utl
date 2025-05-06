@@ -11,7 +11,7 @@ gradient_text.stylize("gradient(blue, magenta)")
 
 def show_banner():
     console.print(gradient_text)
-    console.print("powered by ZYAMA", style="bold magenta")
+    console.print("powered by ZYAMA NEVERMORSKY", style="bold magenta")
 
 def format_data(label, value):
     if value:
@@ -49,8 +49,11 @@ def input_profile():
     profile["VK"] = input("VK: ")
     profile["OK"] = input("OK: ")
     profile["TT"] = input("TT: ")
-    profile["PHOTO"] = input("PHOTO: ")
-    console.print("\n[bold green]Данные человека сохранены![/bold green]")
+    profile["ФОТО"] = input("ФОТО: ")
+    console.print("\n[bold green]Данные человека сохранены![/bold green]\n")
+    
+    console.clear()
+    show_profile()
 
 def show_profile():
     if not any(profile.values()):
@@ -69,10 +72,11 @@ def edit_profile():
 
 def main_menu():
     while True:
+        console.clear()
         show_banner()
         console.print("\n[bold cyan]Главное меню:[/bold cyan]")
         console.print("[1] Поиск по username [bold red][UNWORK][/bold red]")
-        consele.print("[2] Снос аккаунта [bold red][UNWORK][/bold red]")
+        console.print("[2] Снос аккаунта [bold red][UNWORK][/bold red]")
         console.print("[3] Оформить данные")
         console.print("[4] Показать данные")
         console.print("[5] Редактировать данные")
@@ -80,12 +84,10 @@ def main_menu():
 
         choice = input("\nВыберите пункт: ")
 
-        elif choice == "1":
+        if choice == "1":
             console.print("\n[bold red]Функция пробива пока не реализована.[/bold red]")
-            input_profile()
         elif choice == "2":
             console.print("\n[bold red]Функция сноса пока не реализована.[/bold red]")
-            input_profile()
         elif choice == "3":
             input_profile()
         elif choice == "4":
@@ -99,7 +101,6 @@ def main_menu():
             console.print("[bold red]Неверный выбор![/bold red]")
 
         input("\n[Нажмите Enter, чтобы вернуться в меню...]")
-        console.clear()
 
 # Запуск
 main_menu()
