@@ -1,85 +1,96 @@
+import pyfiglet
 from rich.console import Console
 from rich.text import Text
-from rich.panel import Panel
-from rich.theme import Theme
-from rich.style import Style
-from rich.color import Color
 
-# Настроим консоль с пользовательской темой
-custom_theme = Theme({
-    "field": "bold cyan",
-    "label": "bold magenta",
-    "title": Style(color="magenta", bgcolor="yellow", bold=True),  # Простой стиль для заголовка
-    "menu": "bold green",
-    "input": "bold yellow"
-})
-console = Console(theme=custom_theme)
+# Настройка консоли
+console = Console()
 
-people_data = []  # Список для хранения информации о людях
+# Генерация текста с pyfiglet для заголовка
+ascii_title = pyfiglet.figlet_format("NOVA OSINT", font="slant")
 
-def format_field(prompt, label, capitalize=False):
-    console.print(f"[input]{prompt}[/input]", end=": ")
-    value = input().strip()
-    if not value:
-        return None
-    if capitalize:
-        parts = value.lower().split()
-        value = " ".join(part.capitalize() for part in parts)
-    return f"[bold cyan][+] {label}:[/bold cyan] {value}"
+# Создание текста с плавным градиентом
+gradient_text = Text(ascii_title, style="bold")
+gradient_text.stylize("gradient(blue, magenta)")
 
-def input_person():
-    console.print("\n[input]Кто этот человек? (например: сам, мама, папа и т.д.)[/input]", end=": ")
-    subject = input().strip().upper() or "ДАННЫЕ"
+# Вывод заголовка с градиентом
+console.print(gradient_text)
+console.print("powered by ZYAMA NEVERMORSKY", style="bold magenta")
 
-    fields = [
-        ("Введите ФИО", "ФИО", True),
-        ("Введите город", "Город", True),
-        ("Введите номер телефона", "Номер телефона", False),
-        ("Введите дату рождения", "Дата рождения", False),
-        ("Введите адрес", "Адрес", False),
-        ("Введите серию и номер паспорта", "Паспорт", False),
-        ("Введите СНИЛС", "СНИЛС", False),
-        ("Введите соц. сети", "Соц. сети", False),
-    ]
+# Функция для оформления и вывода данных
+def format_data(label, value):
+    if value is not None:
+        return f"[+] {label}: {value}"
+    return ""
 
-    person = []
-    for prompt, label, capitalize in fields:
-        result = format_field(prompt, label, capitalize)
-        if result:
-            person.append(result)
+# Сбор данных
+print("Введите информацию для создания профиля:")
 
-    people_data.append((subject, person))
-    console.print(f"\n[menu]Данные для [{subject}] успешно сохранены.[/menu]\n")
+fio = input("Введите ФИО: ")
+city = input("Введите город: ")
+phone_number = input("Введите номер телефона: ")
+dob = input("Введите дату рождения (дд.мм.гггг): ")
+address = input("Введите адрес: ")
+passport = input("Введите серию и номер паспорта: ")
+snils = input("Введите СНИЛС: ")
+socials = input("Введите соц. сети: ")
 
-def display_people():
-    if not people_data:
-        console.print("[bold red]Нет сохранённых данных.[/bold red]")
-        return
-    for subject, info in people_data:
-        title = Text(subject, style="title")
-        body = "\n".join(info)
-        panel = Panel(body, title=title, border_style="cyan", expand=False)
-        console.print(panel)
+# Добавление цели
+goal = input("Введите цель (например, мама, папа, или само): ")
 
-def main_menu():
-    while True:
-        console.print("\n[menu]Выберите действие:[/menu]")
-        console.print("[1] Ввести данные")
-        console.print("[2] Показать все данные")
-        console.print("[3] Выход")
+# Печать оформленных данных
+console.print(f"\n[bold green]Цель: {goal}[/bold green]")
 
-        console.print("\n[input]Введите номер действия[/input]", end=": ")
-        choice = input().strip()
+# Вывод всех данных с форматированием
+console.print(format_data("ФИО", fio))
+console.print(format_data("Город", city))
+console.print(format_data("Номер телефона", phone_number))
+console.print(format_data("Дата рождения", dob))
+console.print(format_data("Адрес", address))
+console.print(format_data("Паспорт", passport))
+console.print(format_data("СНИЛС", snils))
+console.print(format_data("Соц. сети", socials))
 
-        if choice == "1":
-            input_person()
-        elif choice == "2":
-            display_people()
-        elif choice == "3":
-            console.print("[bold red]Выход из программы...[/bold red]")
-            break
-        else:
-            console.print("[bold red]Неверный выбор. Попробуйте снова.[/bold red]")
+# Главное меню
+menu_options = [
+    "[1] Показать профиль",
+    "[2] Внести изменения",
+    "[3] Выход"
+]
 
-if __name__ == "__main__":
-    main_menu()
+# Отображение меню
+console.print("\n[bold cyan]Меню:[/bold cyan]")
+for option in menu_options:
+    console.print(option)
+
+# Выбор опции меню
+choice = input("Выберите опцию: ")
+
+if choice == "1":
+    console.print("\n[bold blue]Профиль пользователя:[/bold blue]")
+    console.print(format_data("ФИО", fio))
+    console.print(format_data("Город", city))
+    console.print(format_data("Номер телефона", phone_number))
+    console.print(format_data("Дата рождения", dob))
+    console.print(format_data("Адрес", address))
+    console.print(format_data("Паспорт", passport))
+    console.print(format_data("СНИЛС", snils))
+    console.print(format_data("Соц. сети", socials))
+
+elif choice == "2":
+    console.print("\n[bold yellow]Внесите изменения в профиль:[/bold yellow]")
+    # Повторный ввод данных для изменений
+    fio = input("Введите новое ФИО: ")
+    city = input("Введите новый город: ")
+    phone_number = input("Введите новый номер телефона: ")
+    dob = input("Введите новую дату рождения: ")
+    address = input("Введите новый адрес: ")
+    passport = input("Введите новый паспорт: ")
+    snils = input("Введите новый СНИЛС: ")
+    socials = input("Введите новые соц. сети: ")
+    console.print("\n[bold green]Данные обновлены![/bold green]")
+
+elif choice == "3":
+    console.print("\n[bold red]Выход из программы...[/bold red]")
+
+else:
+    console.print("\n[bold red]Неверный выбор! Попробуйте снова.[/bold red]")
