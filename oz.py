@@ -72,7 +72,7 @@ def main_menu():
         show_banner()
         console.print("\n[bold cyan]Главное меню:[/bold cyan]")
         console.print("[1] Поиск по username [bold red][UNWORK][/bold red]")
-        consele.print("[2] Снос аккаунта [bold red][UNWORK][/bold red]"
+        consele.print("[2] Снос аккаунта [bold red][UNWORK][/bold red]")
         console.print("[3] Оформить данные")
         console.print("[4] Показать данные")
         console.print("[5] Редактировать данные")
