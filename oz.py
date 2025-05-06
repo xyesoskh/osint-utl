@@ -27,7 +27,7 @@ profile = {
     "Адрес": None,
     "Паспорт": None,
     "СНИЛС": None,
-    "TG": None
+    "TG": None,
     "VK": None,
     "OK": None,
     "TT": None,
