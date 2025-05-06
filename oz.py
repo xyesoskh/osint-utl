@@ -82,8 +82,10 @@ def main_menu():
 
         elif choice == "1":
             console.print("\n[bold red]Функция пробива пока не реализована.[/bold red]")
+            input_profile()
         elif choice == "2":
             console.print("\n[bold red]Функция сноса пока не реализована.[/bold red]")
+            input_profile()
         elif choice == "3":
             input_profile()
         elif choice == "4":
