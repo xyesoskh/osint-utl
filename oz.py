@@ -2,17 +2,21 @@ import pyfiglet
 from rich.console import Console
 from rich.text import Text
 
+
+from rich.console import Console
+from rich.text import Text
+
 console = Console()
 
-# Градиентный заголовок
-ascii_title = pyfiglet.figlet_format("OZ OSINT", font="slant")
-gradient_text = Text(ascii_title, style="bold")
-gradient_text.stylize("gradient(blue, magenta)")
-
 def show_banner():
-    console.clear()
-    console.print(gradient_text)
-    console.print("powered by ZYAMA NEVERMORSKY", style="bold magenta")
+    try:
+        with open("ascii-art.txt", "r", encoding="utf-8") as f:
+            ascii_art = f.read()
+        console.print(Text(ascii_art, style="bold magenta"))
+    except FileNotFoundError:
+        console.print("ASCII арт не найден. Убедитесь, что файл ascii-art.txt находится в той же папке.", style="bold red")
+
+    console.print("powered by ZYAMA", style="bold magenta")
 
 def format_data(label, value):
     if value:
