@@ -10,6 +10,7 @@ gradient_text = Text(ascii_title, style="bold")
 gradient_text.stylize("gradient(blue, magenta)")
 
 def show_banner():
+    console.clear()
     console.print(gradient_text)
     console.print("powered by ZYAMA NEVERMORSKY", style="bold magenta")
 
@@ -18,7 +19,7 @@ def format_data(label, value):
         return f"[+] {label}: {value}"
     return ""
 
-# Словарь для анкеты
+# Данные пользователя
 profile = {
     "ФИО": None,
     "Город": None,
@@ -51,50 +52,91 @@ def input_profile():
     profile["TT"] = input("TT: ")
     profile["ФОТО"] = input("ФОТО: ")
     console.print("\n[bold green]Данные человека сохранены![/bold green]\n")
-    
-    console.clear()
     show_profile()
 
 def show_profile():
     if not any(profile.values()):
-        console.print("\n[bold red]Данные человека еще не сохранены.[/bold red]")
+        console.print("\n[bold red]Данные человека ещё не сохранены.[/bold red]")
         return
     console.print(f"\n[bold green]{profile['Цель'].upper()}[/bold green]")
     for key, value in profile.items():
         if key != "Цель":
-            console.print(format_data(key, value))
+            line = format_data(key, value)
+            if line:
+                console.print(line)
 
-def edit_profile():
-    if not any(profile.values()):
-        console.print("\n[bold red]Сначала введите данные![/bold red]")
+def report_menu():
+    console.clear()
+    show_banner()
+    console.print("\n[bold red]Снос аккаунта (жалоба):[/bold red]")
+    console.print("[1] Спам")
+    console.print("[2] Мошенничество")
+    console.print("[3] Призыв к насилию")
+    console.print("[4] Прочее")
+    console.print("[0] Назад")
+
+    choice = input("\nВыберите причину жалобы: ")
+
+    reasons = {
+        "1": "Спам",
+        "2": "Мошенничество",
+        "3": "Призыв к насилию",
+        "4": "Прочее"
+    }
+
+    if choice in reasons:
+        console.print(f"\n[bold green]Жалоба отправлена по причине: {reasons[choice]}[/bold green]")
+    elif choice == "0":
         return
-    input_profile()
+    else:
+        console.print("\n[bold red]Неверный выбор![/bold red]")
+
+    input("\n[Нажмите Enter, чтобы вернуться в меню...]")
+    report_menu()
+
+def search_menu():
+    console.clear()
+    show_banner()
+    console.print("\n[bold cyan]Меню поиска:[/bold cyan]")
+    console.print("[1] Поиск по номеру телефона")
+    console.print("[2] Поиск по email")
+    console.print("[3] Поиск по нику")
+    console.print("[4] По Telegram ID")
+    console.print("[0] Назад")
+
+    choice = input("\nВыберите тип поиска: ")
+
+    if choice == "0":
+        return
+    elif choice in ["1", "2", "3", "4"]:
+        console.print(f"\n[bold red]Функция {choice} пока не реализована.[/bold red]")
+    else:
+        console.print("\n[bold red]Неверный выбор![/bold red]")
+
+    input("\n[Нажмите Enter, чтобы вернуться в меню...]")
+    search_menu()
 
 def main_menu():
     while True:
-        console.clear()
         show_banner()
         console.print("\n[bold cyan]Главное меню:[/bold cyan]")
-        console.print("[1] Поиск по username [bold red][UNWORK][/bold red]")
-        console.print("[2] Снос аккаунта [bold red][UNWORK][/bold red]")
-        console.print("[3] Оформить данные")
-        console.print("[4] Показать данные")
-        console.print("[5] Редактировать данные")
-        console.print("[6] Выход")
+        console.print("[1] Поиск")
+        console.print("[2] GeoOSINT [UNWORK]")
+        console.print("[3] Снос аккаунта [UNWORK]")
+        console.print("[4] Ввод и оформление данных")
+        console.print("[5] Выход")
 
         choice = input("\nВыберите пункт: ")
 
         if choice == "1":
-            console.print("\n[bold red]Функция пробива пока не реализована.[/bold red]")
+            search_menu()
         elif choice == "2":
-            console.print("\n[bold red]Функция сноса пока не реализована.[/bold red]")
+            console.print("\n[bold red]Функция GeoOSINT пока не реализована.[/bold red]")
         elif choice == "3":
-            input_profile()
+            report_menu()
         elif choice == "4":
-            show_profile()
-        elif choice == "5":    
-            edit_profile()
-        elif choice == "6":
+            input_profile()
+        elif choice == "5":
             console.print("\n[bold red]Выход из программы...[/bold red]")
             break
         else:
@@ -102,5 +144,5 @@ def main_menu():
 
         input("\n[Нажмите Enter, чтобы вернуться в меню...]")
 
-# Запуск
+# Запуск программы
 main_menu()
