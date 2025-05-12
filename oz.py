@@ -8,8 +8,8 @@ import time
 import os
 
 # Настройки для Telethon
-api_id = 123456  # Вставь свой API ID
-api_hash = 'abc123abc123abc123abc123abc123ab'  # Вставь свой API Hash
+api_id = 29459757  # Вставь свой API ID
+api_hash = '7cc969764c4de8a52169570ac20000a8'  # Вставь свой API Hash
 client = TelegramClient("oz_helper_session", api_id, api_hash)
 
 # Инициализация консоли для вывода
