@@ -1,13 +1,21 @@
 import pyfiglet
 from rich.console import Console
 from rich.text import Text
+from telethon.sync import TelegramClient
+from telethon.tl.functions.messages import GetHistoryRequest
+import asyncio
+import time
+import os
 
+# Настройки для Telethon
+api_id = 123456  # Вставь свой API ID
+api_hash = 'abc123abc123abc123abc123abc123ab'  # Вставь свой API Hash
+client = TelegramClient("oz_helper_session", api_id, api_hash)
 
-from rich.console import Console
-from rich.text import Text
-
+# Инициализация консоли для вывода
 console = Console()
 
+# Показ баннера
 def show_banner():
     try:
         with open("ascii-art.txt", "r", encoding="utf-8") as f:
@@ -15,15 +23,15 @@ def show_banner():
         console.print(Text(ascii_art, style="bold magenta"))
     except FileNotFoundError:
         console.print("ASCII арт не найден. Убедитесь, что файл ascii-art.txt находится в той же папке.", style="bold red")
-
     console.print("powered by ZYAMA", style="bold magenta")
 
+# Функция для форматирования данных
 def format_data(label, value):
     if value:
         return f"[+] {label}: {value}"
     return ""
 
-# Данные пользователя
+# Данные профиля
 profile = {
     "ФИО": None,
     "Город": None,
@@ -40,6 +48,7 @@ profile = {
     "Цель": None
 }
 
+# Ввод данных профиля
 def input_profile():
     console.print("\n[bold cyan]Введите информацию:[/bold cyan]")
     profile["Цель"] = input("Кто (например, мама, папа, сам): ")
@@ -58,6 +67,7 @@ def input_profile():
     console.print("\n[bold green]Данные человека сохранены![/bold green]\n")
     show_profile()
 
+# Показ данных профиля
 def show_profile():
     if not any(profile.values()):
         console.print("\n[bold red]Данные человека ещё не сохранены.[/bold red]")
@@ -69,35 +79,31 @@ def show_profile():
             if line:
                 console.print(line)
 
-def report_menu():
-    console.clear()
-    show_banner()
-    console.print("\n[bold red]Снос аккаунта (жалоба):[/bold red]")
-    console.print("[1] Спам")
-    console.print("[2] Мошенничество")
-    console.print("[3] Призыв к насилию")
-    console.print("[4] Прочее")
-    console.print("[0] Назад")
+# Функция для запроса по телефону через Sherlock
+async def sherlock_phone_lookup(phone: str):
+    await client.start()
+    entity = await client.get_entity("@sherlock_info_bot")
 
-    choice = input("\nВыберите причину жалобы: ")
+    # Отправка номера
+    await client.send_message(entity=entity, message=phone)
+    await asyncio.sleep(4)  # Подождем, пока бот ответит
 
-    reasons = {
-        "1": "Спам",
-        "2": "Мошенничество",
-        "3": "Призыв к насилию",
-        "4": "Прочее"
-    }
+    # Получаем последние сообщения
+    history = await client(GetHistoryRequest(
+        peer=entity,
+        limit=1,
+        offset_date=None,
+        offset_id=0,
+        max_id=0,
+        min_id=0,
+        add_offset=0,
+        hash=0
+    ))
 
-    if choice in reasons:
-        console.print(f"\n[bold green]Жалоба отправлена по причине: {reasons[choice]}[/bold green]")
-    elif choice == "0":
-        return
-    else:
-        console.print("\n[bold red]Неверный выбор![/bold red]")
+    message = history.messages[0].message
+    return message
 
-    input("\n[Нажмите Enter, чтобы вернуться в меню...]")
-    report_menu()
-
+# Меню поиска
 def search_menu():
     console.clear()
     show_banner()
@@ -113,14 +119,33 @@ def search_menu():
 
     if choice == "0":
         return
-    elif choice in ["1", "2", "3", "4"]:
-        console.print(f"\n[bold red]Функция {choice} пока не реализована.[/bold red]")
+    elif choice == "3":
+        phone = input("\nВведите номер телефона (в формате +79991234567): ")
+        # Проверяем корректность формата номера
+        if not phone.startswith("+7") and not phone.startswith("8"):
+            console.print("[bold red]Формат неверен. Начинай с +7 или 8.[/bold red]")
+            return
+
+        try:
+            console.print("[bold cyan]Запрос к Sherlock...[/bold cyan]")
+            result = asyncio.run(sherlock_phone_lookup(phone))
+
+            # Выводим результат в консоль
+            if "Не найдено" in result:
+                console.print(f"\n[bold red]Ничего не найдено для {phone}.[/bold red]")
+            else:
+                console.print(f"\n[bold green]Результаты для {phone}:[/bold green]")
+                console.print(result)
+
+        except Exception as e:
+            console.print(f"[bold red]Ошибка при запросе: {e}[/bold red]")
     else:
         console.print("\n[bold red]Неверный выбор![/bold red]")
-
+    
     input("\n[Нажмите Enter, чтобы вернуться в меню...]")
     search_menu()
 
+# Главное меню
 def main_menu():
     while True:
         show_banner()
@@ -138,7 +163,7 @@ def main_menu():
         elif choice == "2":
             console.print("\n[bold red]Функция GeoOSINT пока не реализована.[/bold red]")
         elif choice == "3":
-            report_menu()
+            console.print("\n[bold red]Функция Снос аккаунта пока не реализована.[/bold red]")
         elif choice == "4":
             input_profile()
         elif choice == "5":
@@ -150,4 +175,5 @@ def main_menu():
         input("\n[Нажмите Enter, чтобы вернуться в меню...]")
 
 # Запуск программы
-main_menu()
+if __name__ == "__main__":
+    main_menu()
