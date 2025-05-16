@@ -2,20 +2,20 @@ import pyfiglet
 from rich.console import Console
 from rich.text import Text
 from telethon.sync import TelegramClient
+from telethon.sessions import StringSession
 from telethon.tl.functions.messages import GetHistoryRequest
 import asyncio
-import time
-import os
 
 # Настройки для Telethon
-api_id = 29459757  # Вставь свой API ID
-api_hash = '7cc969764c4de8a52169570ac20000a8'  # Вставь свой API Hash
-client = TelegramClient("oz_helper_session", api_id, api_hash)
+api_id = 29459757  # Твой API ID
+api_hash = '7cc969764c4de8a52169570ac20000a8'  # Твой API Hash
+session_string = "1ApWapzMBu4Sbmc7c5s44pLQ22UEse-Uyc0U0xWkxcOshY..."  # 🔁 ВСТАВЬ СЮДА ПОЛНЫЙ session_string
 
-# Инициализация консоли для вывода
+client = TelegramClient(StringSession(session_string), api_id, api_hash)
+
+# Инициализация консоли
 console = Console()
 
-# Показ баннера
 def show_banner():
     try:
         with open("ascii-art.txt", "r", encoding="utf-8") as f:
@@ -25,13 +25,11 @@ def show_banner():
         console.print("ASCII арт не найден. Убедитесь, что файл ascii-art.txt находится в той же папке.", style="bold red")
     console.print("powered by ZYAMA", style="bold magenta")
 
-# Функция для форматирования данных
 def format_data(label, value):
     if value:
         return f"[+] {label}: {value}"
     return ""
 
-# Данные профиля
 profile = {
     "ФИО": None,
     "Город": None,
@@ -48,7 +46,6 @@ profile = {
     "Цель": None
 }
 
-# Ввод данных профиля
 def input_profile():
     console.print("\n[bold cyan]Введите информацию:[/bold cyan]")
     profile["Цель"] = input("Кто (например, мама, папа, сам): ")
@@ -67,7 +64,6 @@ def input_profile():
     console.print("\n[bold green]Данные человека сохранены![/bold green]\n")
     show_profile()
 
-# Показ данных профиля
 def show_profile():
     if not any(profile.values()):
         console.print("\n[bold red]Данные человека ещё не сохранены.[/bold red]")
@@ -79,16 +75,11 @@ def show_profile():
             if line:
                 console.print(line)
 
-# Функция для запроса по телефону через Sherlock
 async def sherlock_phone_lookup(phone: str):
     await client.start()
     entity = await client.get_entity("@sherlock_info_bot")
-
-    # Отправка номера
     await client.send_message(entity=entity, message=phone)
-    await asyncio.sleep(4)  # Подождем, пока бот ответит
-
-    # Получаем последние сообщения
+    await asyncio.sleep(4)  # Подожди ответ
     history = await client(GetHistoryRequest(
         peer=entity,
         limit=1,
@@ -99,11 +90,8 @@ async def sherlock_phone_lookup(phone: str):
         add_offset=0,
         hash=0
     ))
+    return history.messages[0].message
 
-    message = history.messages[0].message
-    return message
-
-# Меню поиска
 def search_menu():
     console.clear()
     show_banner()
@@ -121,31 +109,25 @@ def search_menu():
         return
     elif choice == "3":
         phone = input("\nВведите номер телефона (в формате +79991234567): ")
-        # Проверяем корректность формата номера
         if not phone.startswith("+7") and not phone.startswith("8"):
             console.print("[bold red]Формат неверен. Начинай с +7 или 8.[/bold red]")
             return
-
         try:
             console.print("[bold cyan]Запрос к Sherlock...[/bold cyan]")
             result = asyncio.run(sherlock_phone_lookup(phone))
-
-            # Выводим результат в консоль
             if "Не найдено" in result:
                 console.print(f"\n[bold red]Ничего не найдено для {phone}.[/bold red]")
             else:
                 console.print(f"\n[bold green]Результаты для {phone}:[/bold green]")
                 console.print(result)
-
         except Exception as e:
             console.print(f"[bold red]Ошибка при запросе: {e}[/bold red]")
     else:
         console.print("\n[bold red]Неверный выбор![/bold red]")
-    
+
     input("\n[Нажмите Enter, чтобы вернуться в меню...]")
     search_menu()
 
-# Главное меню
 def main_menu():
     while True:
         show_banner()
@@ -174,6 +156,5 @@ def main_menu():
 
         input("\n[Нажмите Enter, чтобы вернуться в меню...]")
 
-# Запуск программы
 if __name__ == "__main__":
     main_menu()
