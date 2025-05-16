@@ -1,5 +1,6 @@
 import pyfiglet
 from rich.console import Console
+from telethon.tl.functions.messages import GetHistoryRequest
 from rich.text import Text
 from telethon.sync import TelegramClient
 from telethon.sessions import StringSession
@@ -81,12 +82,17 @@ async def sherlock_phone_lookup(phone: str):
     
     sent_message = await client.send_message(entity, phone)
     
-    await asyncio.sleep(2)  # Подожди пару секунд, чтобы бот ответил
+    await asyncio.sleep(2)  # Подождать ответ бота
     
     history = await client(GetHistoryRequest(
         peer=entity,
-        limit=10,          # Берём до 10 последних сообщений
-        min_id=sent_message.id  # Только после отправленного сообщения
+        limit=10,
+        offset_id=0,
+        offset_date=None,
+        add_offset=0,
+        max_id=0,
+        min_id=sent_message.id,
+        hash=0
     ))
     
     messages = [msg.message for msg in reversed(history.messages)]
