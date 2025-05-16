@@ -76,14 +76,20 @@ def show_profile():
             if line:
                 console.print(line)
 
+import asyncio
+from telethon.tl.functions.messages import GetHistoryRequest
+
 async def sherlock_phone_lookup(phone: str):
     await client.start()
     entity = await client.get_entity("@osinthelper123_bot")
 
     sent_message = await client.send_message(entity, phone)
 
-    # Ждём до 10 секунд, проверяя, что появилось новое сообщение после отправленного
-    for _ in range(20):
+    timeout = 15  # секунд максимальное ожидание
+    elapsed = 0
+    interval = 1  # интервал проверки в секундах
+
+    while elapsed < timeout:
         history = await client(GetHistoryRequest(
             peer=entity,
             limit=5,
@@ -94,16 +100,18 @@ async def sherlock_phone_lookup(phone: str):
             min_id=sent_message.id,
             hash=0
         ))
-        
-        # Берём сообщения после отправленного
+
+        # Фильтруем сообщения, которые пришли после отправленного
         messages_after = [msg for msg in history.messages if msg.id > sent_message.id]
 
-        if len(messages_after) >= 1:
-            # Возвращаем самое последнее сообщение после запроса (с результатом)
+        if messages_after:
+            # Возвращаем самое последнее сообщение — обычно ответ бота
             return messages_after[0].message
-        await asyncio.sleep(0.5)  # ждём полсекунды и пробуем снова
 
-    return "Ошибка: ответ от бота не получен за 10 секунд"
+        await asyncio.sleep(interval)
+        elapsed += interval
+
+    return "Ошибка: ответ от бота не получен за 15 секунд"
 def search_menu():
     console.clear()
     show_banner()
