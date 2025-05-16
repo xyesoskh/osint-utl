@@ -114,7 +114,7 @@ def search_menu():
             console.print("[bold red]Формат неверен. Начинай с +7 или 8.[/bold red]")
             return
         try:
-            console.print("[bold cyan]Запрос к Sherlock...[/bold cyan]")
+            console.print("[bold cyan]Поиск в базе...[/bold cyan]")
             result = asyncio.run(sherlock_phone_lookup(phone))
             if "Не найдено" in result:
                 console.print(f"\n[bold red]Ничего не найдено для {phone}.[/bold red]")
