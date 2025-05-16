@@ -77,7 +77,7 @@ def show_profile():
 
 async def sherlock_phone_lookup(phone: str):
     await client.start()
-    entity = await client.get_entity("@sherlock_info_bot")
+    entity = await client.get_entity("@osinthelper123_bot")
     
     sent_message = await client.send_message(entity, phone)
     
