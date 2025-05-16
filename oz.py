@@ -79,26 +79,31 @@ def show_profile():
 async def sherlock_phone_lookup(phone: str):
     await client.start()
     entity = await client.get_entity("@osinthelper123_bot")
-    
-    sent_message = await client.send_message(entity, phone)
-    
-    await asyncio.sleep(2)  # Подождать ответ бота
-    
-    history = await client(GetHistoryRequest(
-        peer=entity,
-        limit=10,
-        offset_id=0,
-        offset_date=None,
-        add_offset=0,
-        max_id=0,
-        min_id=sent_message.id,
-        hash=0
-    ))
-    
-    messages = [msg.message for msg in reversed(history.messages)]
-    full_response = "\n".join(messages)
-    return full_response
 
+    sent_message = await client.send_message(entity, phone)
+
+    # Ждём до 10 секунд, проверяя, что появилось новое сообщение после отправленного
+    for _ in range(20):
+        history = await client(GetHistoryRequest(
+            peer=entity,
+            limit=5,
+            offset_id=0,
+            offset_date=None,
+            add_offset=0,
+            max_id=0,
+            min_id=sent_message.id,
+            hash=0
+        ))
+        
+        # Берём сообщения после отправленного
+        messages_after = [msg for msg in history.messages if msg.id > sent_message.id]
+
+        if len(messages_after) >= 1:
+            # Возвращаем самое последнее сообщение после запроса (с результатом)
+            return messages_after[0].message
+        await asyncio.sleep(0.5)  # ждём полсекунды и пробуем снова
+
+    return "Ошибка: ответ от бота не получен за 10 секунд"
 def search_menu():
     console.clear()
     show_banner()
