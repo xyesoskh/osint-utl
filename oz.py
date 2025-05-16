@@ -77,20 +77,21 @@ def show_profile():
 
 async def sherlock_phone_lookup(phone: str):
     await client.start()
-    entity = await client.get_entity("@osinthelper123_bot")
-    await client.send_message(entity=entity, message=phone)
-    await asyncio.sleep(4)  # Подожди ответ
+    entity = await client.get_entity("@sherlock_info_bot")
+    
+    sent_message = await client.send_message(entity, phone)
+    
+    await asyncio.sleep(2)  # Подожди пару секунд, чтобы бот ответил
+    
     history = await client(GetHistoryRequest(
         peer=entity,
-        limit=1,
-        offset_date=None,
-        offset_id=0,
-        max_id=0,
-        min_id=0,
-        add_offset=0,
-        hash=0
+        limit=10,          # Берём до 10 последних сообщений
+        min_id=sent_message.id  # Только после отправленного сообщения
     ))
-    return history.messages[0].message
+    
+    messages = [msg.message for msg in reversed(history.messages)]
+    full_response = "\n".join(messages)
+    return full_response
 
 def search_menu():
     console.clear()
