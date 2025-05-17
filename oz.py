@@ -77,10 +77,11 @@ async def sherlock_phone_lookup(phone: str):
 
     sent_message = await client.send_message(entity, phone)
 
-    timeout = 20
+    timeout = 25  # максимум 25 секунд ожидания
     elapsed = 0
-    interval = 1
-    last_message_text = ""
+    interval = 2  # каждые 2 секунды проверяем историю
+
+    last_result = None
 
     while elapsed < timeout:
         history = await client(GetHistoryRequest(
@@ -94,21 +95,20 @@ async def sherlock_phone_lookup(phone: str):
             hash=0
         ))
 
-        messages_after = [msg for msg in history.messages if msg.id > sent_message.id]
+        # Берём только сообщения, которые новее отправленного
+        messages = sorted([m for m in history.messages if m.id > sent_message.id], key=lambda m: m.date)
 
-        if messages_after:
-            for msg in sorted(messages_after, key=lambda m: m.date):
-                if msg.message and msg.message != last_message_text and "ожидайте" not in msg.message.lower():
-                    last_message_text = msg.message
-                    if "меню" in msg.message.lower() or msg.reply_markup:
-                        continue
-                    return msg.message
+        for msg in messages:
+            # Пропускаем промежуточные статусы
+            if msg.message and "подождите" not in msg.message.lower():
+                if msg.message != last_result:
+                    last_result = msg.message
+                    return last_result
 
         await asyncio.sleep(interval)
         elapsed += interval
 
-    return "Ошибка: бот не прислал окончательный ответ за 20 секунд."
-
+    return "❌ Ошибка: бот не прислал итог за 25 секунд."
 def search_menu():
     console.clear()
     show_banner()
