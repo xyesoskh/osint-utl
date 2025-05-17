@@ -1,20 +1,17 @@
 import pyfiglet
 from rich.console import Console
-from telethon.tl.functions.messages import GetHistoryRequest
 from rich.text import Text
 from telethon.sync import TelegramClient
 from telethon.sessions import StringSession
 from telethon.tl.functions.messages import GetHistoryRequest
 import asyncio
 
-# Настройки для Telethon
-api_id = 29459757  # Твой API ID
-api_hash = '7cc969764c4de8a52169570ac20000a8'  # Твой API Hash
-session_string = "1ApWapzMBu4Sbmc7c5s44pLQ22UEse-Uyc0U0xWkxcOshYoED_Fb71Sq54idI6hqSNWQVG_gCDQhnUQVAFd_fQMcbRbNWvmoqDM4uS02q-RTcvwQT3mDOGcabfPwYaPV8oXtHfNTOHHY8vukH6NP7gSUBA4itvhpGn74nC1SfngevCA_LfGpeoOtN_jZDMG_zlWtlpAHxlJl6w5zS7qIR6kwSvD-HfKBCKlHOAdgMndoFEda47mrj35Glz1v7OVgFcv2RhxKPWCOkcynMIwLDpDyCjj1k_1zr_LtAuaDgrLKJVz0h5Khj7122_7b0H2kypMDzGOp5fqATdKt5KeS3PzkawZENeH0="  # 🔁 ВСТАВЬ СЮДА ПОЛНЫЙ session_string
-
+# Настройки Telethon
+api_id = 29459757
+api_hash = '7cc969764c4de8a52169570ac20000a8'
+session_string = "1ApWapzMBu4Sbmc7c5s44pLQ22UEse-Uyc0U0xWkxcOshYoED_Fb71Sq54idI6hqSNWQVG_gCDQhnUQVAFd_fQMcbRbNWvmoqDM4uS02q-RTcvwQT3mDOGcabfPwYaPV8oXtHfNTOHHY8vukH6NP7gSUBA4itvhpGn74nC1SfngevCA_LfGpeoOtN_jZDMG_zlWtlpAHxlJl6w5zS7qIR6kwSvD-HfKBCKlHOAdgMndoFEda47mrj35Glz1v7OVgFcv2RhxKPWCOkcynMIwLDpDyCjj1k_1zr_LtAuaDgrLKJVz0h5Khj7122_7b0H2kypMDzGOp5fqATdKt5KeS3PzkawZENeH0="
 client = TelegramClient(StringSession(session_string), api_id, api_hash)
 
-# Инициализация консоли
 console = Console()
 
 def show_banner():
@@ -23,13 +20,11 @@ def show_banner():
             ascii_art = f.read()
         console.print(Text(ascii_art, style="bold magenta"))
     except FileNotFoundError:
-        console.print("ASCII арт не найден. Убедитесь, что файл ascii-art.txt находится в той же папке.", style="bold red")
+        console.print("ASCII арт не найден.", style="bold red")
     console.print("powered by ZYAMA", style="bold magenta")
 
 def format_data(label, value):
-    if value:
-        return f"[+] {label}: {value}"
-    return ""
+    return f"[+] {label}: {value}" if value else ""
 
 profile = {
     "ФИО": None,
@@ -76,23 +71,21 @@ def show_profile():
             if line:
                 console.print(line)
 
-import asyncio
-from telethon.tl.functions.messages import GetHistoryRequest
-
 async def sherlock_phone_lookup(phone: str):
     await client.start()
     entity = await client.get_entity("@osinthelper123_bot")
 
     sent_message = await client.send_message(entity, phone)
 
-    timeout = 15  # секунд максимальное ожидание
+    timeout = 20
     elapsed = 0
-    interval = 1  # интервал проверки в секундах
+    interval = 1
+    last_message_text = ""
 
     while elapsed < timeout:
         history = await client(GetHistoryRequest(
             peer=entity,
-            limit=5,
+            limit=10,
             offset_id=0,
             offset_date=None,
             add_offset=0,
@@ -101,17 +94,21 @@ async def sherlock_phone_lookup(phone: str):
             hash=0
         ))
 
-        # Фильтруем сообщения, которые пришли после отправленного
         messages_after = [msg for msg in history.messages if msg.id > sent_message.id]
 
         if messages_after:
-            # Возвращаем самое последнее сообщение — обычно ответ бота
-            return messages_after[0].message
+            for msg in sorted(messages_after, key=lambda m: m.date):
+                if msg.message and msg.message != last_message_text and "ожидайте" not in msg.message.lower():
+                    last_message_text = msg.message
+                    if "меню" in msg.message.lower() or msg.reply_markup:
+                        continue
+                    return msg.message
 
         await asyncio.sleep(interval)
         elapsed += interval
 
-    return "Ошибка: ответ от бота не получен за 15 секунд"
+    return "Ошибка: бот не прислал окончательный ответ за 20 секунд."
+
 def search_menu():
     console.clear()
     show_banner()
@@ -163,9 +160,9 @@ def main_menu():
         if choice == "1":
             search_menu()
         elif choice == "2":
-            console.print("\n[bold red]Функция GeoOSINT пока не реализована.[/bold red]")
+            console.print("\n[bold red]GeoOSINT пока не реализован.[/bold red]")
         elif choice == "3":
-            console.print("\n[bold red]Функция Снос аккаунта пока не реализована.[/bold red]")
+            console.print("\n[bold red]Снос аккаунта пока не реализован.[/bold red]")
         elif choice == "4":
             input_profile()
         elif choice == "5":
