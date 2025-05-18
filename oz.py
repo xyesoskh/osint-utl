@@ -109,6 +109,35 @@ async def sherlock_phone_lookup(phone: str):
         elapsed += interval
 
     return "❌ Ошибка: бот не прислал итог за 25 секунд."
+
+def parse_bot_message(message: str):
+    fields = {
+        "ФИО": r"(?:Имя|ФИО):\s*(.+)",
+        "Регион": r"Город:\s*(.+)",
+        "Номер телефона": r"Телефон:\s*(.+)",
+        "Телефонные Книги": r"Записан:\s*(.+)",
+        "E-mail": r"Email:/s*(.+)",
+        "Дата рождения": r"Дата рождения:\s*(.+)",
+        "Адрес": r"Адрес:\s*(.+)",
+        "Паспорт": r"Паспорт:\s*(.+)",
+        "СНИЛС": r"СНИЛС:\s*(.+)",
+        "Telegram": r"TG ID:\s*@?(\S+)",
+        "Вконтакте": r"VK:\s*(.+)",
+        "Одноклассники": r"OK:\s*(.+)",
+        "TikTok": r"TT:\s*(.+)",
+        "Instagram": r"Insta:\s*(.+)",
+        "ФОТО": r"Фото:\s*(.+)"
+    }
+
+    parsed = {}
+
+    for key, pattern in fields.items():
+        match = re.search(pattern, message, re.IGNORECASE)
+        if match:
+            parsed[key] = match.group(1).strip()
+
+    return parsed
+
 def search_menu():
     console.clear()
     show_banner()
@@ -132,7 +161,14 @@ def search_menu():
         try:
             console.print("[bold cyan]Поиск в базе...[/bold cyan]")
             result = asyncio.run(sherlock_phone_lookup(phone))
-            if "Не найдено" in result:
+parsed = parse_bot_message(result)
+
+if parsed:
+    console.print(f"\n[bold green]Результаты для {phone}:[/bold green]")
+    for key, value in parsed.items():
+        console.print(f"[+] {key}: {value}")
+else:
+    console.print(result)
                 console.print(f"\n[bold red]Ничего не найдено для {phone}.[/bold red]")
             else:
                 console.print(f"\n[bold green]Результаты для {phone}:[/bold green]")
