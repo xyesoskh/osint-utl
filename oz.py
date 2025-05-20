@@ -100,7 +100,7 @@ def search_menu():
     if not query:
         console.print("[bold red]Пустой ввод![/bold red]")
         return
-def snos_menu()
+def snos_menu():
     console.clear()
     show_banner()
     console.print("\n[bold cyan]Меню сноса:[/bold cyan]"
