@@ -103,7 +103,7 @@ def search_menu():
 def snos_menu():
     console.clear()
     show_banner()
-    console.print("\n[bold cyan]Меню сноса:[/bold cyan]"
+    console.print("\n[bold cyan]Меню сноса:[/bold cyan]")
     console.print("[1] Снос по почте")
     console.print("[2] Cнос через сайт")
     console.print("[3] Снос через жалобы телеграма")
