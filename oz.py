@@ -140,7 +140,7 @@ def main_menu():
         if choice == "1":
             search_menu()
         elif choice == "2" 
-        console.print("\n[bold red]Функционал пока не реализован.[/bold red]"
+        console.print("\n[bold red]Функционал пока не реализован.[/bold red]")
         elif choice == "3":
              snons_menu()
         elif choice == "4":
