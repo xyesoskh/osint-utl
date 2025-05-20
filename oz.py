@@ -100,9 +100,16 @@ def search_menu():
     if not query:
         console.print("[bold red]Пустой ввод![/bold red]")
         return
-
+def snos_menu()
+    console.clear()
+    show_banner()
+    console.print("\n[bold cyan]Меню сноса:[/bold cyan]"
+    console.print("[1] Снос по почте")
+    console.print("[2] Cнос через сайт")
+    console.print("[3] Снос через жалобы телеграма")
+    
     try:
-        console.print("\n[bold yellow]🔎 Идёт поиск, пожалуйста, подождите...[/bold yellow]")
+        console.print("\n[bold yellow]Поиск в базах...[/bold yellow]")
         result = asyncio.run(sherlock_lookup(query))
         parsed = parse_bot_message(result)
 
@@ -132,8 +139,10 @@ def main_menu():
 
         if choice == "1":
             search_menu()
-        elif choice == "2" or choice == "3":
-            console.print("\n[bold red]Функционал пока не реализован.[/bold red]")
+        elif choice == "2" 
+        console.print("\n[bold red]Функционал пока не реализован.[/bold red]"
+        elif choice == "3":
+             snons_menu()
         elif choice == "4":
             console.print("\n[bold cyan]Форма ввода данных пока не подключена.[/bold cyan]")
         elif choice == "5":
